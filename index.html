@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Age Calculator</title>
+    
+    <style type="text/css">
+       
+        .login-box {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .log {
+            background: #444;
+            color: #fff;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .login {
+            padding: 15px;
+        }
+        
+        /* তারিখ, মাস, বছরের জন্য আধুনিক ৩-কলাম গ্রিড লেআউট */
+        .date-selector-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* সমান ৩ ভাগে পুরো স্ক্রিন/জায়গা ভাগ করবে */
+            gap: 12px; /* বক্সগুলোর মাঝখানের গ্যাপ */
+            margin-bottom: 15px;
+            text-align: center; /* ভেতরের লেখা মাঝ বরাবর রাখবে */
+        }
+        
+        .date-field {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .date-field label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #222;
+        }
+
+        /* ড্রপডাউন বক্সগুলোর সাইজ বড় করা হয়েছে */
+        select {  
+            width: 100%;  
+            padding: 10px; /* ভেতরের গ্যাপ বড় করা হয়েছে */
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            text-align: center;
+        }
+        
+        /* নিচের রেজাল্ট ইনপুট বক্স */
+        input[type=text] {
+            width: 100%;
+            padding: 8px;
+            color: #0000ff;
+            border: 1px solid blue;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        /* readonly বক্সগুলোর ব্যাকগ্রাউন্ড একটু হালকা করা, যাতে বোঝা যায় এগুলো এডিট করা যাবে না */
+        input[readonly] {
+            background-color: #f9f9f9;
+            cursor: default;
+        }
+
+        .btn-info {
+            width: 100%;
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 0 15px 0;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .btn-info:hover {
+            background-color: #138496;
+        }
+        .Comments {
+            margin-bottom: 12px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+
+    <script language="javascript">
+        var startyear = "1971"; 
+        var endyear = "2030"; 
+        
+        var dat = new Date(); 
+        var curday = dat.getDate(); 
+        var curmon = dat.getMonth() + 1; 
+        var curyear = dat.getFullYear(); 
+
+        function DaysInMonth(Y, M) { 
+            with (new Date(Y, M, 1, 12)) { 
+                setDate(0); 
+                return getDate(); 
+            } 
+        } 
+
+        function datediff(date1, date2) { 
+            var y1 = date1.getFullYear(), m1 = date1.getMonth(), d1 = date1.getDate(), 
+                y2 = date2.getFullYear(), m2 = date2.getMonth(), d2 = date2.getDate(); 
+            
+            if (d1 < d2) { 
+                m1--; 
+                d1 += DaysInMonth(y2, m2); 
+            } 
+            if (m1 < m2) { 
+                y1--; 
+                m1 += 12; 
+            } 
+            return [y1 - y2, m1 - m2, d1 - d2]; 
+        } 
+
+        function calage() { 
+            var calday = document.birthday.day.options[document.birthday.day.selectedIndex].value; 
+            var calmon = document.birthday.month.options[document.birthday.month.selectedIndex].value; 
+            var calyear = document.birthday.year.options[document.birthday.year.selectedIndex].value; 
+            
+            if(curday == "" || curmon == "" || curyear == "" || calday == "" || calmon == "" || calyear == "") { 
+                alert("please fill all the values and click go -"); 
+            } else { 
+                var curd = new Date(curyear, curmon - 1, curday); 
+                var cald = new Date(calyear, calmon - 1, calday); 
+                
+                var diff = Date.UTC(curyear, curmon, curday, 0, 0, 0) - Date.UTC(calyear, calmon, calday, 0, 0, 0); 
+                var dife = datediff(curd, cald); 
+                
+                document.birthday.age.value = dife[0] + " years, " + dife[1] + " months, and " + dife[2] + " days"; 
+                
+                var monleft = (dife[0] * 12) + dife[1]; 
+                var secleft = diff / 1000 / 60; 
+                var hrsleft = secleft / 60; 
+                var daysleft = hrsleft / 24; 
+                
+                document.birthday.months.value = monleft + " Month since your birth"; 
+                document.birthday.daa.value = daysleft + " days since your birth"; 
+                document.birthday.hours.value = hrsleft + " hours since your birth"; 
+                document.birthday.min.value = secleft + " minutes since your birth"; 
+                
+                var as = parseInt(calyear) + dife[0] + 1; 
+                var diff2 = Date.UTC(as, calmon, calday, 0, 0, 0) - Date.UTC(curyear, curmon, curday, 0, 0, 0); 
+                var datee = diff2 / 1000 / 60 / 60 / 24; 
+                
+                document.birthday.nbday.value = datee + " days left for your next birthday"; 
+            } 
+        } 
+    </script>
+</head>
+<body>
+
+<div class="login-box">
+    <div class="log">Age Calculator</div>
+    <div class="login">
+        <form name="birthday" role="form">
+            
+            <div class="date-selector-container">
+                <div class="date-field">
+                    <label>Date</label>
+                    <select name="day">
+                        <script language="javascript">
+                            for(var j=1; j<32; j++) {
+                                document.write("<option value="+j+">"+j+"</option>");
+                            }
+                        </script>
+                    </select>
+                </div>
+                <div class="date-field">
+                    <label>Month</label>
+                    <select name="month">
+                        <script language="javascript">
+                            for(var i=1; i<13; i++) {
+                                document.write("<option value="+i+">"+i+"</option>");
+                            }
+                        </script>
+                    </select>
+                </div>
+                <div class="date-field">
+                    <label>Year</label>
+                    <select name="year">
+                        <script language="javascript">
+                            for(var k=startyear; k<=endyear; k++) {
+                                document.write("<option value="+k+">"+k+"</option>");
+                            }
+                        </script>
+                    </select>
+                </div>
+            </div>
+
+            <input name="start" class="btn btn-info" onclick="calage()" value="CALCULATE" type="button"/>
+
+            <div class="Comments">
+                You have been living for
+                <input type="text" name="age" readonly />
+            </div>
+            <div class="Comments">
+                In Months:
+                <input type="text" name="months" readonly />
+            </div>
+            <div class="Comments">
+                In Days:
+                <input type="text" name="daa" readonly />
+            </div>
+            <div class="Comments">
+                In Hours:
+                <input type="text" name="hours" readonly />
+            </div>
+            <div class="Comments">
+                In Minutes:
+                <input type="text" name="min" readonly />
+            </div>
+            <div class="Comments">
+                Your Next Birthday:
+                <input type="text" name="nbday" readonly />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://sharecode.wapkiz.com/js/2.js"></script> 
+
+</body>
+</html>
